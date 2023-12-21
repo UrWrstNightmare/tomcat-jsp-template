@@ -26,6 +26,8 @@ services:
       - --collation-server=euckr_korean_ci
 
   tomcat:
+    depends_on: 
+      - db
     container_name: test-jsp-server-tomcat
     image: tomcat:9.0.84-jdk21-temurin-jammy
     ports:

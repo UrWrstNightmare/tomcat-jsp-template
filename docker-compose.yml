@@ -1,0 +1,43 @@
+version: '3.3'
+services:
+  db:
+    container_name: test-jsp-server-mysql
+    image: mysql:5.7
+    environment:
+      MYSQL_DATABASE: 'YOUR_DATABASE_NAME_HERE'
+      # So you don't have to use root, but you can if you like
+      MYSQL_USER: 'YOUR_USER_NAME_HERE'
+      # You can use whatever password you like
+      MYSQL_PASSWORD: 'YOUR_USER_PASSWORD_HERE'
+      # Password for root access
+      MYSQL_ROOT_PASSWORD: 'YOUR_ROOT_PASSWORD_HERE'
+    ports:
+      # <Port exposed> : <MySQL Port running inside container>
+      - '13306:3306'
+    expose:
+      # Opens port 13306 on the container
+      - '13306'
+      # Where our data will be persisted
+    volumes:
+      - test-jsp-server-mysql:/var/lib/mysql
+      - ./.initdb:/docker-entrypoint-initdb.d # To run init config scripts
+    command:
+      - --character-set-server=euckr
+      - --collation-server=euckr_korean_ci
+
+  tomcat:
+    container_name: test-jsp-server-tomcat
+    image: tomcat:9.0.84-jdk21-temurin-jammy
+    ports:
+      - '8080:8505'
+    expose:
+      - '8080'
+    volumes:
+      - './www:/usr/local/tomcat/webapps/www'
+      - './server.xml:/usr/local/tomcat/conf/server.xml'
+      - './logs:/usr/local/tomcat/logs'
+    
+      
+# Names our volume
+volumes:
+  test-jsp-server-mysql:
